@@ -1,65 +1,85 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
+
+export default function HomePage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-[#3b82f6]">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="relative min-h-screen flex flex-col items-center justify-center p-6">
+      {/* Hero content */}
+      <div className="relative z-10 max-w-2xl mx-auto text-center space-y-8">
+        {/* Logo/Icon */}
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[rgba(59,130,246,0.1)] border border-[rgba(59,130,246,0.3)] animate-pulse-glow">
+          <Sparkles className="w-10 h-10 text-[#3b82f6]" />
+        </div>
+
+        {/* Title */}
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#f1f5f9] leading-tight">
+            12-Step Recovery
+            <span className="block text-gradient">Workbook</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg text-[#94a3b8] max-w-md mx-auto">
+            A digital companion for your recovery journey. Work through the steps at your own pace with privacy, support, and encouragement.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/signup">
+            <Button size="lg" className="min-w-[160px]">
+              Get Started
+            </Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline" size="lg" className="min-w-[160px]">
+              Sign In
+            </Button>
+          </Link>
         </div>
-      </main>
-    </div>
+
+        {/* Features */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8">
+          <div className="p-4 rounded-lg bg-[rgba(30,41,59,0.5)] border border-[#334155]">
+            <h3 className="font-medium text-[#f1f5f9] mb-1">Private & Secure</h3>
+            <p className="text-sm text-[#94a3b8]">Your work stays private. Review with your sponsor verbally.</p>
+          </div>
+          <div className="p-4 rounded-lg bg-[rgba(30,41,59,0.5)] border border-[#334155]">
+            <h3 className="font-medium text-[#f1f5f9] mb-1">Track Progress</h3>
+            <p className="text-sm text-[#94a3b8]">See your journey with day counters and step completion.</p>
+          </div>
+          <div className="p-4 rounded-lg bg-[rgba(30,41,59,0.5)] border border-[#334155]">
+            <h3 className="font-medium text-[#f1f5f9] mb-1">Daily Support</h3>
+            <p className="text-sm text-[#94a3b8]">Gentle encouragement notifications to keep you motivated.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="absolute bottom-6 text-center text-sm text-[#64748b]">
+        <p>Based on the 12-step program. Not affiliated with any specific organization.</p>
+      </footer>
+    </main>
   );
 }

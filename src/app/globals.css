@@ -1,26 +1,418 @@
 @import "tailwindcss";
 
+/* ===== CSS Variables for Dark Ethereal Theme ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Colors */
+  --background: #0f172a;
+  --background-secondary: #1e293b;
+  --foreground: #f1f5f9;
+  --foreground-muted: #94a3b8;
+  
+  /* Primary Blue Accent */
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-glow: rgba(59, 130, 246, 0.3);
+  --primary-muted: rgba(59, 130, 246, 0.1);
+  
+  /* Status Colors */
+  --success: #22c55e;
+  --success-muted: rgba(34, 197, 94, 0.2);
+  --warning: #f59e0b;
+  --error: #ef4444;
+  
+  /* Surface Colors */
+  --card: #1e293b;
+  --card-hover: #334155;
+  --border: #334155;
+  --border-muted: #1e293b;
+  
+  /* Input Colors */
+  --input-bg: #0f172a;
+  --input-border: #334155;
+  --input-focus: #3b82f6;
+  
+  /* Shadows and Effects */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px var(--primary-glow);
+  
+  /* Gradients */
+  --gradient-ethereal: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  --gradient-card: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --gradient-radial: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
 }
 
+/* ===== Tailwind Theme Integration ===== */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ===== Base Styles ===== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Ethereal Background Effects ===== */
+.ethereal-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.ethereal-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+  animation: ethereal-drift 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes ethereal-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(2%, 1%) rotate(1deg);
+  }
+  66% {
+    transform: translate(-1%, 2%) rotate(-1deg);
+  }
+}
+
+/* ===== Watercolor Overlay Effect ===== */
+.watercolor-overlay {
+  position: relative;
+}
+
+.watercolor-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ===== Glow Effects ===== */
+.glow {
+  box-shadow: var(--shadow-glow);
+}
+
+.glow-soft {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px var(--primary-glow);
+}
+
+/* ===== Card Styles ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--primary-muted);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.card-gradient {
+  background: var(--gradient-card);
+}
+
+/* ===== Input Styles ===== */
+.input-ethereal {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  color: var(--foreground);
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input-ethereal:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px var(--primary-muted);
+}
+
+.input-ethereal::placeholder {
+  color: var(--foreground-muted);
+}
+
+/* ===== Button Styles ===== */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--card);
+  border-color: var(--primary-muted);
+}
+
+/* ===== Progress Ring ===== */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  stroke: var(--border);
+  fill: none;
+}
+
+.progress-ring-fill {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+/* ===== Animations ===== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--primary-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--primary-glow), 0 0 40px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-muted);
+}
+
+/* ===== Text Styles ===== */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.quote-style {
+  font-style: italic;
+  color: var(--foreground-muted);
+  border-left: 3px solid var(--primary);
+  padding-left: 1rem;
+  margin: 1rem 0;
+}
+
+/* ===== Accordion Styles ===== */
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.accordion-trigger:hover {
+  background: var(--primary-muted);
+}
+
+.accordion-content {
+  overflow: hidden;
+  animation: accordion-open 0.3s ease-out;
+}
+
+@keyframes accordion-open {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+/* ===== Tab Styles ===== */
+.tab-trigger {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--foreground-muted);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-trigger:hover {
+  color: var(--foreground);
+}
+
+.tab-trigger[data-state="active"] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ===== Step Number Badge ===== */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-muted);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.step-badge.completed {
+  background: var(--success-muted);
+  color: var(--success);
+}
+
+.step-badge.current {
+  background: var(--primary);
+  color: white;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ===== Checkbox Styles ===== */
+.checkbox-ethereal {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox-ethereal:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ===== Day Counter Card ===== */
+.day-counter {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.day-counter-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.day-counter-label {
+  color: var(--foreground-muted);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
