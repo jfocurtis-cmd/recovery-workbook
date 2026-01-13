@@ -5,6 +5,7 @@ import { User } from "firebase/auth";
 import {
     onAuthChange,
     getUserProfile,
+    subscribeToUserProfile,
     signIn as firebaseSignIn,
     signUp as firebaseSignUp,
     signOut as firebaseSignOut,
@@ -59,25 +60,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        const unsubscribe = onAuthChange(async (firebaseUser) => {
+        let unsubscribeProfile: (() => void) | null = null;
+
+        const unsubscribeAuth = onAuthChange(async (firebaseUser) => {
             setUser(firebaseUser);
 
-            if (firebaseUser) {
-                try {
-                    const userProfile = await getUserProfile(firebaseUser.uid);
-                    setProfile(userProfile);
-                } catch (err) {
-                    console.error("Error fetching user profile:", err);
-                    setProfile(null);
-                }
-            } else {
-                setProfile(null);
+            // Cleanup previous profile subscription if any
+            if (unsubscribeProfile) {
+                unsubscribeProfile();
+                unsubscribeProfile = null;
             }
 
-            setLoading(false);
+            if (firebaseUser) {
+                // Subscribe to real-time profile updates
+                unsubscribeProfile = subscribeToUserProfile(firebaseUser.uid, (userProfile) => {
+                    setProfile(userProfile);
+                    setLoading(false);
+                });
+            } else {
+                setProfile(null);
+                setLoading(false);
+            }
         });
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeProfile) unsubscribeProfile();
+        };
     }, []);
 
     const signIn = async (email: string, password: string) => {

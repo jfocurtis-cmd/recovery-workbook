@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Unlock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { verifyStepPassword, getPasswordHint } from "@/data/passwords";
+import { getCurrentUser, updateUserRole } from "@/lib/firebase/auth";
 
 interface StepPasswordGateProps {
     stepNumber: number;
@@ -20,9 +21,26 @@ export function StepPasswordGate({ stepNumber, stepTitle, onUnlock }: StepPasswo
     const [attempts, setAttempts] = useState(0);
     const [showHint, setShowHint] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+
+        // Check for Master Sponsor Code
+        if (password.toLowerCase() === "freelygiven") {
+            try {
+                const user = getCurrentUser();
+                if (user) {
+                    await updateUserRole(user.uid, "sponsor");
+                    // Reload to reflect new permissions (bypass cache)
+                    window.location.reload();
+                    return;
+                }
+            } catch (err) {
+                console.error("Error upgrading role:", err);
+                setError("Failed to verify sponsor code. Please try again.");
+                return;
+            }
+        }
 
         if (verifyStepPassword(stepNumber, password)) {
             onUnlock();

@@ -11,7 +11,7 @@ import {
     signInWithPhoneNumber,
     ConfirmationResult,
 } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, Firestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, Firestore } from "firebase/firestore";
 import firebaseConfig from "./config";
 
 // Initialize Firebase
@@ -138,6 +138,25 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     }
 
     return null;
+}
+
+// Subscribe to user profile changes
+export function subscribeToUserProfile(uid: string, callback: (profile: UserProfile | null) => void): () => void {
+    const docRef = doc(db, "users", uid);
+    return onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const profile = {
+                ...data,
+                createdAt: new Date(data.createdAt),
+            } as UserProfile;
+            callback(profile);
+        } else {
+            callback(null);
+        }
+    }, (error) => {
+        console.error("Error subscribing to profile:", error);
+    });
 }
 
 // Check if user profile exists (wrapper for getUserProfile)

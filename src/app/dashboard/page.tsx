@@ -82,11 +82,27 @@ export default function DashboardPage() {
         }
     };
 
-    const handleGateSubmit = (e: React.FormEvent) => {
+    const handleGateSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setGateError(""); // Clear previous errors
+
         if (gatePassword.toLowerCase() === "freelygiven") {
-            setViewRole("sponsor");
-            setIsGateOpen(false);
+            try {
+                // Dynamically import to avoid circular dependencies if any
+                const { updateUserRole } = await import("@/lib/firebase/auth");
+
+                if (user) {
+                    await updateUserRole(user.uid, "sponsor");
+                    setViewRole("sponsor");
+                    setIsGateOpen(false);
+                    // Force a profile reload or wait for onIdTokenChanged? 
+                    // Usually Firestore update triggers the hook, but let's be safe.
+                    window.location.reload();
+                }
+            } catch (err) {
+                console.error("Error upgrading role:", err);
+                setGateError("Failed to update account. Please try again.");
+            }
         } else {
             setGateError("Incorrect access code.");
         }

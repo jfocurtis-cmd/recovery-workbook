@@ -97,62 +97,8 @@ export default function SignupPage() {
                                 </div>
                             )}
 
-                            {/* Role Selection */}
-                            <div className="space-y-2">
-                                <Label className="text-[#f1f5f9]">I am a...</Label>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole("sponsee")}
-                                        className={`
-                        flex flex-col items-center gap-2 p-4 rounded-lg border transition-all
-                        ${role === "sponsee"
-                                                ? "bg-[rgba(59,130,246,0.1)] border-[#3b82f6] text-[#3b82f6]"
-                                                : "bg-[#0f172a] border-[#334155] text-[#94a3b8] hover:border-[rgba(59,130,246,0.3)]"
-                                            }
-                      `}
-                                    >
-                                        <UserCheck className="h-6 w-6" />
-                                        <span className="text-sm font-medium">Sponsee</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setRole("sponsor")}
-                                        className={`
-                        flex flex-col items-center gap-2 p-4 rounded-lg border transition-all
-                        ${role === "sponsor"
-                                                ? "bg-[rgba(59,130,246,0.1)] border-[#3b82f6] text-[#3b82f6]"
-                                                : "bg-[#0f172a] border-[#334155] text-[#94a3b8] hover:border-[rgba(59,130,246,0.3)]"
-                                            }
-                      `}
-                                    >
-                                        <Users className="h-6 w-6" />
-                                        <span className="text-sm font-medium">Sponsor</span>
-                                    </button>
-                                </div>
-                            </div>
+                            {/* Defaulting to Sponsee - Role Selection Removed */}
 
-                            {/* Sponsor Access Password Gate */}
-                            {role === "sponsor" && (
-                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                    <Label htmlFor="sponsorPassword">Sponsor Access Password</Label>
-                                    <div className="relative">
-                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#3b82f6]" />
-                                        <Input
-                                            id="sponsorPassword"
-                                            type="password"
-                                            placeholder="Enter access code"
-                                            value={sponsorPassword}
-                                            onChange={(e) => setSponsorPassword(e.target.value)}
-                                            className="pl-10 border-[#3b82f6] focus:ring-[#3b82f6] bg-[#0f172a] text-[#f1f5f9]"
-                                            required
-                                        />
-                                    </div>
-                                    <p className="text-xs text-[#94a3b8]">
-                                        Hint: "Freely ye have received..."
-                                    </p>
-                                </div>
-                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="displayName" className="text-[#f1f5f9]">Display Name</Label>
