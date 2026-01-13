@@ -42,7 +42,53 @@ export interface UserProfile {
     displayName?: string;
 }
 
-// ... (keep existing signUp, signIn, signOut, getUserProfile, onAuthChange, getCurrentUser functions)
+// Sign up with email, password, and role
+export async function signUp(
+    email: string,
+    password: string,
+    role: UserRole,
+    displayName?: string
+): Promise<UserProfile> {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    const userProfile: UserProfile = {
+        uid: user.uid,
+        email: email,
+        role: role,
+        createdAt: new Date(),
+        displayName: displayName || email.split("@")[0],
+    };
+
+    // Save user profile to Firestore
+    await setDoc(doc(db, "users", user.uid), {
+        ...userProfile,
+        createdAt: userProfile.createdAt.toISOString(),
+    });
+
+    return userProfile;
+}
+
+// Sign in with email and password
+export async function signIn(email: string, password: string): Promise<User> {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+}
+
+// Sign out
+export async function signOut(): Promise<void> {
+    await firebaseSignOut(auth);
+}
+
+// Listen to auth state changes
+export function onAuthChange(callback: (user: User | null) => void): () => void {
+    return onAuthStateChanged(auth, callback);
+}
+
+// Get current user
+export function getCurrentUser(): User | null {
+    return auth?.currentUser || null;
+}
 
 export { auth, db };
 
