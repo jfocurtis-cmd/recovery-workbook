@@ -13,7 +13,7 @@ import {
 } from "@/lib/firebase/auth";
 
 // Demo mode flag - set to true to bypass Firebase auth
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 
 // Mock user for demo mode
 const DEMO_USER: User = {
