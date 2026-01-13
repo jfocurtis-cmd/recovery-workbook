@@ -8,7 +8,7 @@ import {
     User,
     Auth,
 } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, Firestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, Firestore } from "firebase/firestore";
 import firebaseConfig from "./config";
 
 // Initialize Firebase
@@ -101,3 +101,9 @@ export function getCurrentUser(): User | null {
 }
 
 export { auth, db };
+
+// Update user role
+export async function updateUserRole(uid: string, role: UserRole): Promise<void> {
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, { role });
+}

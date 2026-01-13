@@ -328,15 +328,39 @@ export default function StepPage() {
     if (!isSponsor && !isUnlocked) {
         return (
             <main className="min-h-screen relative z-10">
-                <div className="bg-red-900/80 text-white text-xs p-2 text-center font-mono">
-                    DEBUG: Role={(user as any)?.role || 'undefined'} ProfileRole={profile?.role || 'null'} IsSponsor={isSponsor ? 'YES' : 'NO'}
-                </div>
                 <StepNavigationHeader stepNumber={stepNumber} />
                 <StepPasswordGate
                     stepNumber={stepNumber}
                     stepTitle={step.title}
                     onUnlock={handleUnlock}
                 />
+
+                {/* Manual Role Switch for stuck users */}
+                <div className="flex justify-center pb-10">
+                    <button
+                        onClick={async () => {
+                            const code = prompt("Enter Sponsor Access Code:");
+                            if (code?.toLowerCase() === "freelygiven") {
+                                if (user) {
+                                    try {
+                                        // Dynamic import to avoid circular dependency issues if any
+                                        const { updateUserRole } = await import("@/lib/firebase/auth");
+                                        await updateUserRole(user.uid, "sponsor");
+                                        alert("Role updated to Sponsor! Reloading...");
+                                        window.location.reload();
+                                    } catch (e) {
+                                        alert("Error updating role: " + e);
+                                    }
+                                }
+                            } else if (code) {
+                                alert("Incorrect code.");
+                            }
+                        }}
+                        className="text-xs text-slate-600 hover:text-slate-400 underline mt-4"
+                    >
+                        I am a Sponsor (Fix Permissions)
+                    </button>
+                </div>
             </main>
         );
     }
