@@ -8,17 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Mail, Lock, AlertCircle } from "lucide-react";
+import { Sparkles, Mail, Lock, AlertCircle, Smartphone } from "lucide-react"; // Added Smartphone
+import { PhoneAuthForm } from "@/components/auth/PhoneAuthForm";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
     const { signIn } = useAuth();
     const router = useRouter();
 
+    const handlePhoneSuccess = (user: any) => {
+        // Phone auth verified. Redirect to dashboard.
+        router.push("/dashboard");
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
+        // ... existing email submit logic ...
         e.preventDefault();
         setError(null);
         setIsLoading(true);
@@ -47,50 +55,78 @@ export default function LoginPage() {
                 </CardHeader>
 
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && (
-                            <div className="flex items-center gap-2 p-3 rounded-lg bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.3)] text-[#ef4444] text-sm">
-                                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                                {error}
-                            </div>
-                        )}
+                    {/* Method Toggle */}
+                    <div className="flex bg-slate-900 p-1 rounded-lg mb-6">
+                        <button
+                            onClick={() => setAuthMethod("phone")}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${authMethod === "phone"
+                                    ? "bg-blue-600 text-white shadow-md"
+                                    : "text-slate-400 hover:text-slate-200"
+                                }`}
+                        >
+                            <Smartphone className="h-4 w-4" />
+                            Phone
+                        </button>
+                        <button
+                            onClick={() => setAuthMethod("email")}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${authMethod === "email"
+                                    ? "bg-blue-600 text-white shadow-md"
+                                    : "text-slate-400 hover:text-slate-200"
+                                }`}
+                        >
+                            <Mail className="h-4 w-4" />
+                            Email
+                        </button>
+                    </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="you@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10"
-                                    required
-                                />
-                            </div>
-                        </div>
+                    {authMethod === "phone" ? (
+                        <PhoneAuthForm onVerificationSuccess={handlePhoneSuccess} />
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in">
+                            {error && (
+                                <div className="flex items-center gap-2 p-3 rounded-lg bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.3)] text-[#ef4444] text-sm">
+                                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                                    {error}
+                                </div>
+                            )}
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10"
-                                    required
-                                />
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="you@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="pl-10"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? "Signing in..." : "Sign In"}
-                        </Button>
-                    </form>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Password</Label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="pl-10"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? "Signing in..." : "Sign In"}
+                            </Button>
+                        </form>
+                    )}
 
                     <div className="mt-6 text-center text-sm text-[#94a3b8]">
                         Don't have an account?{" "}

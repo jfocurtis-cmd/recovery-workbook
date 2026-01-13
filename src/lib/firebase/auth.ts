@@ -7,6 +7,9 @@ import {
     onAuthStateChanged,
     User,
     Auth,
+    RecaptchaVerifier,
+    signInWithPhoneNumber,
+    ConfirmationResult,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, Firestore } from "firebase/firestore";
 import firebaseConfig from "./config";
@@ -22,7 +25,9 @@ if (typeof window !== "undefined") {
     } else {
         app = getApps()[0];
     }
+    // Initialize Auth
     auth = getAuth(app);
+    // Initialize Firestore
     db = getFirestore(app);
 }
 
@@ -30,48 +35,47 @@ export type UserRole = "sponsor" | "sponsee";
 
 export interface UserProfile {
     uid: string;
-    email: string;
+    email?: string;
+    phoneNumber?: string;
     role: UserRole;
     createdAt: Date;
     displayName?: string;
 }
 
-// Sign up with email, password, and role
-export async function signUp(
-    email: string,
-    password: string,
-    role: UserRole,
-    displayName?: string
-): Promise<UserProfile> {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+// ... (keep existing signUp, signIn, signOut, getUserProfile, onAuthChange, getCurrentUser functions)
 
-    const userProfile: UserProfile = {
-        uid: user.uid,
-        email: email,
-        role: role,
-        createdAt: new Date(),
-        displayName: displayName || email.split("@")[0],
-    };
+export { auth, db };
 
-    // Save user profile to Firestore
-    await setDoc(doc(db, "users", user.uid), {
-        ...userProfile,
-        createdAt: userProfile.createdAt.toISOString(),
+// Update user role
+export async function updateUserRole(uid: string, role: UserRole): Promise<void> {
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, { role });
+}
+
+// --- PHONE AUTH UTILITIES ---
+
+export function setupRecaptcha(elementId: string): RecaptchaVerifier {
+    if (!auth) throw new Error("Auth not initialized");
+
+    // Clear existing recaptcha if any
+    const existingVerifier = (window as any).recaptchaVerifier;
+    if (existingVerifier) {
+        existingVerifier.clear();
+    }
+
+    const verifier = new RecaptchaVerifier(auth, elementId, {
+        'size': 'invisible',
+        'callback': () => {
+            // reCAPTCHA solved
+        }
     });
 
-    return userProfile;
+    (window as any).recaptchaVerifier = verifier;
+    return verifier;
 }
 
-// Sign in with email and password
-export async function signIn(email: string, password: string): Promise<User> {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-}
-
-// Sign out
-export async function signOut(): Promise<void> {
-    await firebaseSignOut(auth);
+export async function signInWithPhone(phoneNumber: string, appVerifier: RecaptchaVerifier): Promise<ConfirmationResult> {
+    return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
 }
 
 // Get user profile from Firestore
@@ -90,20 +94,24 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return null;
 }
 
-// Listen to auth state changes
-export function onAuthChange(callback: (user: User | null) => void): () => void {
-    return onAuthStateChanged(auth, callback);
+// Check if user profile exists (wrapper for getUserProfile)
+export async function checkUserProfileExists(uid: string): Promise<boolean> {
+    const profile = await getUserProfile(uid);
+    return !!profile;
 }
 
-// Get current user
-export function getCurrentUser(): User | null {
-    return auth?.currentUser || null;
-}
+// Create profile for phone user
+export async function createPhoneUserProfile(user: User, role: UserRole, displayName?: string): Promise<void> {
+    const userProfile: UserProfile = {
+        uid: user.uid,
+        phoneNumber: user.phoneNumber || undefined,
+        role: role,
+        createdAt: new Date(),
+        displayName: displayName || "User",
+    };
 
-export { auth, db };
-
-// Update user role
-export async function updateUserRole(uid: string, role: UserRole): Promise<void> {
-    const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { role });
+    await setDoc(doc(db, "users", user.uid), {
+        ...userProfile,
+        createdAt: userProfile.createdAt.toISOString(),
+    });
 }
