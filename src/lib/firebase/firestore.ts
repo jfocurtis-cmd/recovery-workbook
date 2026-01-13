@@ -1,5 +1,5 @@
 // Demo mode flag - must match AuthContext
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 
 // Types
 export interface StepProgress {
