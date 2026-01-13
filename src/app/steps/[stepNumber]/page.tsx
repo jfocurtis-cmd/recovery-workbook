@@ -39,7 +39,7 @@ export default function StepPage() {
     const params = useParams();
     const stepNumber = parseInt(params.stepNumber as string, 10);
     const router = useRouter();
-    const { user, loading, isSponsor } = useAuth();
+    const { user, profile, loading, isSponsor } = useAuth();
 
     const [stepProgress, setStepProgress] = useState<StepProgress | null>(null);
     const [stepData, setStepData] = useState<Record<string, unknown>>({});
@@ -328,6 +328,9 @@ export default function StepPage() {
     if (!isSponsor && !isUnlocked) {
         return (
             <main className="min-h-screen relative z-10">
+                <div className="bg-red-900/80 text-white text-xs p-2 text-center font-mono">
+                    DEBUG: Role={(user as any)?.role || 'undefined'} ProfileRole={profile?.role || 'null'} IsSponsor={isSponsor ? 'YES' : 'NO'}
+                </div>
                 <StepNavigationHeader stepNumber={stepNumber} />
                 <StepPasswordGate
                     stepNumber={stepNumber}
