@@ -336,7 +336,7 @@ export default function StepPage() {
                 />
 
                 {/* Manual Role Switch for stuck users */}
-                <div className="flex justify-center pb-10">
+                <div className="fixed bottom-8 left-0 right-0 flex justify-center z-50">
                     <button
                         onClick={async () => {
                             const code = prompt("Enter Sponsor Access Code:");
@@ -356,7 +356,7 @@ export default function StepPage() {
                                 alert("Incorrect code.");
                             }
                         }}
-                        className="text-xs text-slate-600 hover:text-slate-400 underline mt-4"
+                        className="text-sm text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer"
                     >
                         I am a Sponsor (Fix Permissions)
                     </button>
