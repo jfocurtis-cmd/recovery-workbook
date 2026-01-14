@@ -126,21 +126,28 @@ export function FillableList({
                                             {index + 1}
                                         </span>
                                         <Textarea
-                                            value={item.content || ""}
+                                            value={String(item.content || "")}
                                             onChange={(e) => updateItem(index, "content", e.target.value)}
                                             placeholder={`Example ${index + 1}...`}
                                             className="min-h-[60px] flex-1"
                                             data-gramm="false"
+                                            id={`${fieldKey}_${index}_content`}
                                         />
                                     </div>
 
                                     {/* Optional date field */}
                                     {hasDate && (
                                         <div className="ml-9">
-                                            <Label className="text-xs text-[#94a3b8]">{dateLabel}</Label>
+                                            <Label
+                                                htmlFor={`${fieldKey}_${index}_date`}
+                                                className="text-xs text-[#94a3b8]"
+                                            >
+                                                {dateLabel}
+                                            </Label>
                                             <Input
+                                                id={`${fieldKey}_${index}_date`}
                                                 type="text"
-                                                value={item.date || ""}
+                                                value={String(item.date || "")}
                                                 onChange={(e) => updateItem(index, "date", e.target.value)}
                                                 placeholder="e.g., Summer 2019, March 2020..."
                                                 className="mt-1"
@@ -153,9 +160,15 @@ export function FillableList({
                                     {/* Optional ripple effects field */}
                                     {hasRippleEffects && (
                                         <div className="ml-9">
-                                            <Label className="text-xs text-[#94a3b8]">{rippleEffectsLabel}</Label>
+                                            <Label
+                                                htmlFor={`${fieldKey}_${index}_ripple`}
+                                                className="text-xs text-[#94a3b8]"
+                                            >
+                                                {rippleEffectsLabel}
+                                            </Label>
                                             <Textarea
-                                                value={item.rippleEffects || ""}
+                                                id={`${fieldKey}_${index}_ripple`}
+                                                value={String(item.rippleEffects || "")}
                                                 onChange={(e) => updateItem(index, "rippleEffects", e.target.value)}
                                                 placeholder="What were the consequences? How did this affect others?"
                                                 className="mt-1 min-h-[60px]"
