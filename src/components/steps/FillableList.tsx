@@ -105,69 +105,77 @@ export function FillableList({
             </div>
 
             <div className="space-y-4">
-                {value.map((item, index) => (
-                    <div
-                        key={item.id || `${fieldKey}_${index}`} // Fallback key
-                        className="p-4 bg-[#0f172a] border border-[#334155] rounded-lg space-y-3"
-                    >
-                        <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 space-y-3">
-                                {/* Main content */}
-                                <div className="flex items-start gap-3">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[rgba(59,130,246,0.2)] text-[#3b82f6] text-sm font-medium flex items-center justify-center">
-                                        {index + 1}
-                                    </span>
-                                    <Textarea
-                                        value={item.content || ""}
-                                        onChange={(e) => updateItem(index, "content", e.target.value)}
-                                        placeholder={`Example ${index + 1}...`}
-                                        className="min-h-[60px] flex-1"
-                                    />
+                {value.map((item, index) => {
+                    if (!item) return null; // Defensive check for null items
+
+                    return (
+                        <div
+                            key={item.id || `${fieldKey}_${index}`} // Fallback key
+                            className="p-4 bg-[#0f172a] border border-[#334155] rounded-lg space-y-3"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex-1 space-y-3">
+                                    {/* Main content */}
+                                    <div className="flex items-start gap-3">
+                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[rgba(59,130,246,0.2)] text-[#3b82f6] text-sm font-medium flex items-center justify-center">
+                                            {index + 1}
+                                        </span>
+                                        <Textarea
+                                            value={item.content || ""}
+                                            onChange={(e) => updateItem(index, "content", e.target.value)}
+                                            placeholder={`Example ${index + 1}...`}
+                                            className="min-h-[60px] flex-1"
+                                            data-gramm="false"
+                                        />
+                                    </div>
+
+                                    {/* Optional date field */}
+                                    {hasDate && (
+                                        <div className="ml-9">
+                                            <Label className="text-xs text-[#94a3b8]">{dateLabel}</Label>
+                                            <Input
+                                                type="text"
+                                                value={item.date || ""}
+                                                onChange={(e) => updateItem(index, "date", e.target.value)}
+                                                placeholder="e.g., Summer 2019, March 2020..."
+                                                className="mt-1"
+                                                autoComplete="off"
+                                                data-gramm="false"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Optional ripple effects field */}
+                                    {hasRippleEffects && (
+                                        <div className="ml-9">
+                                            <Label className="text-xs text-[#94a3b8]">{rippleEffectsLabel}</Label>
+                                            <Textarea
+                                                value={item.rippleEffects || ""}
+                                                onChange={(e) => updateItem(index, "rippleEffects", e.target.value)}
+                                                placeholder="What were the consequences? How did this affect others?"
+                                                className="mt-1 min-h-[60px]"
+                                                data-gramm="false"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Optional date field */}
-                                {hasDate && (
-                                    <div className="ml-9">
-                                        <Label className="text-xs text-[#94a3b8]">{dateLabel}</Label>
-                                        <Input
-                                            type="text"
-                                            value={item.date || ""}
-                                            onChange={(e) => updateItem(index, "date", e.target.value)}
-                                            placeholder="e.g., Summer 2019, March 2020..."
-                                            className="mt-1"
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Optional ripple effects field */}
-                                {hasRippleEffects && (
-                                    <div className="ml-9">
-                                        <Label className="text-xs text-[#94a3b8]">{rippleEffectsLabel}</Label>
-                                        <Textarea
-                                            value={item.rippleEffects || ""}
-                                            onChange={(e) => updateItem(index, "rippleEffects", e.target.value)}
-                                            placeholder="What were the consequences? How did this affect others?"
-                                            className="mt-1 min-h-[60px]"
-                                        />
-                                    </div>
+                                {/* Remove button */}
+                                {value.length > 1 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => removeItem(index)}
+                                        className="text-[#94a3b8] hover:text-[#ef4444]"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 )}
                             </div>
-
-                            {/* Remove button */}
-                            {value.length > 1 && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => removeItem(index)}
-                                    className="text-[#94a3b8] hover:text-[#ef4444]"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            )}
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Add more button */}
