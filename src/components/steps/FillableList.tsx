@@ -58,7 +58,10 @@ export function FillableList({
     }, [count, fieldKey, onChange, value.length]); // Minimal dependencies
 
     const updateItem = (index: number, field: keyof ListItem, newValue: string) => {
-        const newItems = [...value];
+        // Ensure value is an array before spreading
+        const safeValue = Array.isArray(value) ? value : [];
+        const newItems = [...safeValue];
+
         // Ensure the item exists before updating
         if (!newItems[index]) {
             // Should not happen if rendering works, but safe fallback
@@ -76,10 +79,11 @@ export function FillableList({
     };
 
     const addItem = () => {
+        const safeValue = Array.isArray(value) ? value : [];
         onChange(fieldKey, [
-            ...value,
+            ...safeValue,
             {
-                id: `${fieldKey}_${value.length + 1}`,
+                id: `${fieldKey}_${safeValue.length + 1}`,
                 content: "",
                 date: "",
                 rippleEffects: "",
@@ -88,8 +92,9 @@ export function FillableList({
     };
 
     const removeItem = (index: number) => {
-        if (value.length <= 1) return;
-        const newItems = value.filter((_, i) => i !== index);
+        const safeValue = Array.isArray(value) ? value : [];
+        if (safeValue.length <= 1) return;
+        const newItems = safeValue.filter((_, i) => i !== index);
         onChange(fieldKey, newItems);
     };
 
@@ -105,7 +110,7 @@ export function FillableList({
             </div>
 
             <div className="space-y-4">
-                {value.map((item, index) => {
+                {(Array.isArray(value) ? value : []).map((item, index) => {
                     if (!item) return null; // Defensive check for null items
 
                     return (

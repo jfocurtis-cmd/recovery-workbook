@@ -104,25 +104,31 @@ export function FullEntryModal({ entry, onClose, onUpdate }: FullEntryModalProps
                                     <div
                                         key={option.key}
                                         className={`
-                      flex items-center gap-2 p-2 rounded border cursor-pointer transition-all text-sm
+                      flex items-center gap-2 p-2 rounded border transition-all text-sm
                       ${entry.affectsMy[option.key as keyof typeof entry.affectsMy]
                                                 ? "bg-[rgba(59,130,246,0.2)] border-[#3b82f6]"
                                                 : "bg-[#0f172a] border-[#334155] hover:border-[rgba(59,130,246,0.3)]"
                                             }
                     `}
-                                        onClick={() => {
-                                            const newAffects = {
-                                                ...entry.affectsMy,
-                                                [option.key]: !entry.affectsMy[option.key as keyof typeof entry.affectsMy],
-                                            };
-                                            onUpdate("affectsMy", newAffects);
-                                        }}
                                     >
                                         <Checkbox
                                             checked={entry.affectsMy[option.key as keyof typeof entry.affectsMy]}
+                                            onCheckedChange={(checked) => {
+                                                const newAffects = {
+                                                    ...entry.affectsMy,
+                                                    [option.key]: checked,
+                                                };
+                                                onUpdate("affectsMy", newAffects);
+                                            }}
                                             className="h-4 w-4"
+                                            id={`modal-view-${option.key}`}
                                         />
-                                        <Label className="cursor-pointer text-xs">{option.label}</Label>
+                                        <Label
+                                            htmlFor={`modal-view-${option.key}`}
+                                            className="cursor-pointer text-xs"
+                                        >
+                                            {option.label}
+                                        </Label>
                                     </div>
                                 ))}
                             </div>

@@ -151,19 +151,12 @@ export function ColumnView({ entries, onUpdateEntry, onRemoveEntry, onOpenFullVi
                                 <div
                                     key={option.key}
                                     className={`
-                                        flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer
+                                        flex items-center gap-3 p-3 rounded-lg border transition-all
                                         ${currentEntry.affectsMy[option.key as keyof typeof currentEntry.affectsMy]
                                             ? "bg-[rgba(59,130,246,0.1)] border-[rgba(59,130,246,0.3)]"
                                             : "bg-[#0f172a] border-[#334155] hover:border-[rgba(59,130,246,0.3)]"
                                         }
                                     `}
-                                    onClick={() => {
-                                        const newAffects = {
-                                            ...currentEntry.affectsMy,
-                                            [option.key]: !currentEntry.affectsMy[option.key as keyof typeof currentEntry.affectsMy],
-                                        };
-                                        onUpdateEntry(currentEntry.id, "affectsMy", newAffects);
-                                    }}
                                 >
                                     <Checkbox
                                         checked={currentEntry.affectsMy[option.key as keyof typeof currentEntry.affectsMy]}
@@ -174,8 +167,14 @@ export function ColumnView({ entries, onUpdateEntry, onRemoveEntry, onOpenFullVi
                                             };
                                             onUpdateEntry(currentEntry.id, "affectsMy", newAffects);
                                         }}
+                                        id={`col-view-${option.key}`}
                                     />
-                                    <Label className="cursor-pointer">{option.label}</Label>
+                                    <Label
+                                        htmlFor={`col-view-${option.key}`}
+                                        className="cursor-pointer"
+                                    >
+                                        {option.label}
+                                    </Label>
                                 </div>
                             ))}
                         </div>

@@ -20,15 +20,19 @@ let auth: Auth;
 let db: Firestore;
 
 if (typeof window !== "undefined") {
-    if (!getApps().length) {
-        app = initializeApp(firebaseConfig);
-    } else {
-        app = getApps()[0];
+    try {
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApps()[0];
+        }
+        // Initialize Auth
+        auth = getAuth(app);
+        // Initialize Firestore
+        db = getFirestore(app);
+    } catch (error) {
+        console.warn("Firebase initialization failed (Auth/DB disabled):", error);
     }
-    // Initialize Auth
-    auth = getAuth(app);
-    // Initialize Firestore
-    db = getFirestore(app);
 }
 
 export type UserRole = "sponsor" | "sponsee";
@@ -82,6 +86,10 @@ export async function signOut(): Promise<void> {
 
 // Listen to auth state changes
 export function onAuthChange(callback: (user: User | null) => void): () => void {
+    if (!auth) {
+        console.warn("Auth not initialized, skipping listener");
+        return () => { };
+    }
     return onAuthStateChanged(auth, callback);
 }
 

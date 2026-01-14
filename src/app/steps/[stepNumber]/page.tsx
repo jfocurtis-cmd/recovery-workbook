@@ -53,9 +53,9 @@ export default function StepPage() {
 
     // Redirect if not authenticated
     useEffect(() => {
-        if (!loading && !user) {
-            router.push("/login");
-        }
+        // if (!loading && !user) {
+        //     router.push("/login");
+        // }
     }, [user, loading, router]);
 
     // Load step progress
