@@ -95,7 +95,7 @@ export { auth, db };
 // Update user role
 export async function updateUserRole(uid: string, role: UserRole): Promise<void> {
     const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { role });
+    await setDoc(docRef, { role }, { merge: true });
 }
 
 // --- PHONE AUTH UTILITIES ---
