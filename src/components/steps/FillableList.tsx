@@ -39,48 +39,47 @@ export function FillableList({
     dateLabel = "Date (if known)",
     rippleEffectsLabel = "Ripple Effects",
 }: FillableListProps) {
-    const [items, setItems] = useState<ListItem[]>(value);
-    const [isSaving, setIsSaving] = useState(false);
+    const isFirstRender = React.useRef(true);
 
     // Initialize with empty items if needed
     useEffect(() => {
-        if (value.length === 0) {
+        if (value.length === 0 && isFirstRender.current) {
+            isFirstRender.current = false;
             const initialItems = Array.from({ length: count }, (_, i) => ({
                 id: `${fieldKey}_${i + 1}`,
                 content: "",
                 date: "",
                 rippleEffects: "",
             }));
-            setItems(initialItems);
-        } else {
-            setItems(value);
+            onChange(fieldKey, initialItems);
+        } else if (value.length > 0) {
+            isFirstRender.current = false;
         }
-    }, [value, count, fieldKey]);
-
-    // Debounced save
-    useEffect(() => {
-        if (JSON.stringify(items) === JSON.stringify(value)) return;
-
-        const timer = setTimeout(() => {
-            setIsSaving(true);
-            onChange(fieldKey, items);
-            setTimeout(() => setIsSaving(false), 500);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [items, fieldKey, onChange, value]);
+    }, [count, fieldKey, onChange, value.length]); // Minimal dependencies
 
     const updateItem = (index: number, field: keyof ListItem, newValue: string) => {
-        const newItems = [...items];
-        newItems[index] = { ...newItems[index], [field]: newValue };
-        setItems(newItems);
+        const newItems = [...value];
+        // Ensure the item exists before updating
+        if (!newItems[index]) {
+            // Should not happen if rendering works, but safe fallback
+            newItems[index] = {
+                id: `${fieldKey}_${index + 1}`,
+                content: "",
+                date: "",
+                rippleEffects: "",
+                [field]: newValue,
+            };
+        } else {
+            newItems[index] = { ...newItems[index], [field]: newValue };
+        }
+        onChange(fieldKey, newItems);
     };
 
     const addItem = () => {
-        setItems([
-            ...items,
+        onChange(fieldKey, [
+            ...value,
             {
-                id: `${fieldKey}_${items.length + 1}`,
+                id: `${fieldKey}_${value.length + 1}`,
                 content: "",
                 date: "",
                 rippleEffects: "",
@@ -89,9 +88,9 @@ export function FillableList({
     };
 
     const removeItem = (index: number) => {
-        if (items.length <= 1) return;
-        const newItems = items.filter((_, i) => i !== index);
-        setItems(newItems);
+        if (value.length <= 1) return;
+        const newItems = value.filter((_, i) => i !== index);
+        onChange(fieldKey, newItems);
     };
 
     return (
@@ -103,15 +102,12 @@ export function FillableList({
                         <p className="text-sm text-[#94a3b8] mt-1">{instruction}</p>
                     )}
                 </div>
-                {isSaving && (
-                    <span className="text-xs text-[#3b82f6] animate-pulse">Saving...</span>
-                )}
             </div>
 
             <div className="space-y-4">
-                {items.map((item, index) => (
+                {value.map((item, index) => (
                     <div
-                        key={item.id}
+                        key={item.id || `${fieldKey}_${index}`} // Fallback key
                         className="p-4 bg-[#0f172a] border border-[#334155] rounded-lg space-y-3"
                     >
                         <div className="flex items-start justify-between gap-4">
@@ -122,7 +118,7 @@ export function FillableList({
                                         {index + 1}
                                     </span>
                                     <Textarea
-                                        value={item.content}
+                                        value={item.content || ""}
                                         onChange={(e) => updateItem(index, "content", e.target.value)}
                                         placeholder={`Example ${index + 1}...`}
                                         className="min-h-[60px] flex-1"
@@ -158,7 +154,7 @@ export function FillableList({
                             </div>
 
                             {/* Remove button */}
-                            {items.length > 1 && (
+                            {value.length > 1 && (
                                 <Button
                                     type="button"
                                     variant="ghost"
