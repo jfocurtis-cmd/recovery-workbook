@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { checkUserProfileExists } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,9 +21,21 @@ export default function LoginPage() {
     const { signIn } = useAuth();
     const router = useRouter();
 
-    const handlePhoneSuccess = (user: any) => {
-        // Phone auth verified. Redirect to dashboard.
-        router.push("/dashboard");
+    const handlePhoneSuccess = async (user: any) => {
+        // Check if user has a profile
+        try {
+            const hasProfile = await checkUserProfileExists(user.uid);
+            if (hasProfile) {
+                router.push("/dashboard");
+            } else {
+                // New user via login flow -> Redirect to signup details
+                router.push("/signup?step=details");
+            }
+        } catch (error) {
+            console.error("Error checking profile:", error);
+            // Fallback to dashboard if check fails
+            router.push("/dashboard");
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,8 +73,8 @@ export default function LoginPage() {
                         <button
                             onClick={() => setAuthMethod("phone")}
                             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${authMethod === "phone"
-                                    ? "bg-blue-600 text-white shadow-md"
-                                    : "text-slate-400 hover:text-slate-200"
+                                ? "bg-blue-600 text-white shadow-md"
+                                : "text-slate-400 hover:text-slate-200"
                                 }`}
                         >
                             <Smartphone className="h-4 w-4" />
@@ -70,8 +83,8 @@ export default function LoginPage() {
                         <button
                             onClick={() => setAuthMethod("email")}
                             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${authMethod === "email"
-                                    ? "bg-blue-600 text-white shadow-md"
-                                    : "text-slate-400 hover:text-slate-200"
+                                ? "bg-blue-600 text-white shadow-md"
+                                : "text-slate-400 hover:text-slate-200"
                                 }`}
                         >
                             <Mail className="h-4 w-4" />
