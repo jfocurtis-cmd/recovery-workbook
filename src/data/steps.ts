@@ -69,11 +69,7 @@ export const steps: Step[] = [
                         title: "Examples of Powerlessness",
                         instruction: "List (5) specific examples of 'powerlessness' when you were drinking.",
                         items: [
-                            { key: "powerless_1", count: 1, hasDate: true, hasRippleEffects: true },
-                            { key: "powerless_2", count: 2, hasDate: true, hasRippleEffects: true },
-                            { key: "powerless_3", count: 3, hasDate: true, hasRippleEffects: true },
-                            { key: "powerless_4", count: 4, hasDate: true, hasRippleEffects: true },
-                            { key: "powerless_5", count: 5, hasDate: true, hasRippleEffects: true },
+                            { key: "powerless_examples", count: 5, hasDate: true, hasRippleEffects: true },
                         ],
                     },
                     {
@@ -81,11 +77,7 @@ export const steps: Step[] = [
                         title: "Examples of Unmanageability",
                         instruction: "List (5) specific examples of 'unmanageability' when you were drinking.",
                         items: [
-                            { key: "unmanageable_1", count: 1, hasDate: true, hasRippleEffects: true },
-                            { key: "unmanageable_2", count: 2, hasDate: true, hasRippleEffects: true },
-                            { key: "unmanageable_3", count: 3, hasDate: true, hasRippleEffects: true },
-                            { key: "unmanageable_4", count: 4, hasDate: true, hasRippleEffects: true },
-                            { key: "unmanageable_5", count: 5, hasDate: true, hasRippleEffects: true },
+                            { key: "unmanageable_examples", count: 5, hasDate: true, hasRippleEffects: true },
                         ],
                     },
                 ],
