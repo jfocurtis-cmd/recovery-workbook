@@ -134,27 +134,29 @@ export default function DashboardPage() {
 
                     <div className="flex items-center gap-4">
                         <BrandLogo />
-                        <div className="h-6 w-px bg-slate-700 mx-2 hidden sm:block" />
-                        <div className="hidden sm:block">
-                            <p className="text-xs font-medium text-slate-400">
+                        <div className="h-6 w-px bg-slate-700 mx-2" />
+                        <div>
+                            <p className="text-xs font-medium text-slate-400 hidden sm:block">
                                 {profile?.displayName || profile?.email}
                             </p>
                             <p className="text-[10px] text-blue-400 uppercase tracking-wider font-semibold">
-                                {profile?.role === "sponsor" ? "Sponsor" : "Sponsee"}
+                                {profile?.role === "sponsor" ? "Sponsor View" : "Sponsee View"}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Tabs value={viewRole} onValueChange={handleTabChange} className="hidden sm:block">
+                        <Tabs value={viewRole} onValueChange={handleTabChange} className="">
                             <TabsList className="bg-[#1e293b] border border-[#334155]">
-                                <TabsTrigger value="sponsee" className="gap-2 data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
+                                <TabsTrigger value="sponsee" className="gap-2 px-3 data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                                     <User className="h-4 w-4" />
-                                    Sponsee
+                                    <span className="hidden sm:inline">Sponsee</span>
+                                    <span className="sm:hidden">Me</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="sponsor" className="gap-2 data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
+                                <TabsTrigger value="sponsor" className="gap-2 px-3 data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                                     <Users className="h-4 w-4" />
-                                    Sponsor
+                                    <span className="hidden sm:inline">Sponsor</span>
+                                    <span className="sm:hidden">Sp</span>
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>
