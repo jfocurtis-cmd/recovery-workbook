@@ -94,8 +94,7 @@ export function FillableChecklist({
                         <Checkbox
                             id={item.key}
                             checked={checkedItems[item.key] || false}
-                            onCheckedChange={() => toggleItem(item.key)}
-                            className={checkedItems[item.key] ? "border-[#22c55e] data-[state=checked]:bg-[#22c55e] mt-0.5" : "mt-0.5"}
+                            className={`${checkedItems[item.key] ? "border-[#22c55e] data-[state=checked]:bg-[#22c55e]" : ""} mt-0.5 pointer-events-none`}
                         />
                         <Label
                             htmlFor={item.key}
