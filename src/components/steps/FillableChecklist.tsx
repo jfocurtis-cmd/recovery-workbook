@@ -83,23 +83,22 @@ export function FillableChecklist({
                     <div
                         key={item.key}
                         className={`
-              flex items-start gap-3 p-3 rounded-lg border-2 transition-all duration-200 cursor-pointer
+              flex items-start gap-3 p-3 rounded-lg border-2 transition-all duration-200
               ${checkedItems[item.key]
                                 ? "bg-[rgba(34,197,94,0.1)] border-[#22c55e]"
                                 : "bg-[#0f172a] border-[#334155] hover:border-[rgba(59,130,246,0.3)]"
                             }
             `}
-                        onClick={() => toggleItem(item.key)}
                     >
                         <Checkbox
                             id={item.key}
                             checked={checkedItems[item.key] || false}
-                            className={`${checkedItems[item.key] ? "border-[#22c55e] data-[state=checked]:bg-[#22c55e]" : ""} mt-0.5 pointer-events-none`}
+                            onCheckedChange={() => toggleItem(item.key)}
+                            className={`${checkedItems[item.key] ? "border-[#22c55e] data-[state=checked]:bg-[#22c55e]" : ""} mt-0.5`}
                         />
                         <Label
-                            htmlFor={item.key}
                             className={`
-                cursor-pointer flex-1 font-medium transition-colors
+                flex-1 font-medium transition-colors cursor-default
                 ${checkedItems[item.key] ? "text-[#22c55e]" : "text-[#f1f5f9]"}
               `}
                         >
