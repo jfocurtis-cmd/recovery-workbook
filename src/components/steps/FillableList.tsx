@@ -23,6 +23,8 @@ interface FillableListProps {
     hasRippleEffects?: boolean;
     value: ListItem[];
     onChange: (key: string, value: ListItem[]) => void;
+    dateLabel?: string;
+    rippleEffectsLabel?: string;
 }
 
 export function FillableList({
@@ -34,6 +36,8 @@ export function FillableList({
     hasRippleEffects = false,
     value,
     onChange,
+    dateLabel = "Date (if known)",
+    rippleEffectsLabel = "Ripple Effects",
 }: FillableListProps) {
     const [items, setItems] = useState<ListItem[]>(value);
     const [isSaving, setIsSaving] = useState(false);
@@ -128,7 +132,7 @@ export function FillableList({
                                 {/* Optional date field */}
                                 {hasDate && (
                                     <div className="ml-9">
-                                        <Label className="text-xs text-[#94a3b8]">Date (if known)</Label>
+                                        <Label className="text-xs text-[#94a3b8]">{dateLabel}</Label>
                                         <Input
                                             type="text"
                                             value={item.date || ""}
@@ -142,7 +146,7 @@ export function FillableList({
                                 {/* Optional ripple effects field */}
                                 {hasRippleEffects && (
                                     <div className="ml-9">
-                                        <Label className="text-xs text-[#94a3b8]">Ripple Effects</Label>
+                                        <Label className="text-xs text-[#94a3b8]">{rippleEffectsLabel}</Label>
                                         <Textarea
                                             value={item.rippleEffects || ""}
                                             onChange={(e) => updateItem(index, "rippleEffects", e.target.value)}

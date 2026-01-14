@@ -469,6 +469,8 @@ export default function StepPage() {
                                         count={item.count}
                                         hasDate={item.hasDate}
                                         hasRippleEffects={item.hasRippleEffects}
+                                        dateLabel={item.dateLabel}
+                                        rippleEffectsLabel={item.rippleEffectsLabel}
                                         value={(stepData[item.key] as any[]) || []}
                                         onChange={handleFieldChange}
                                     />

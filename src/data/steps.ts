@@ -9,6 +9,8 @@ export interface SectionItem {
     hasRippleEffects?: boolean;
     checklistOptions?: string[];
     subItems?: string[];
+    dateLabel?: string;
+    rippleEffectsLabel?: string;
 }
 
 export interface StepSection {
@@ -382,8 +384,13 @@ export const steps: Step[] = [
                 title: "8th Step List",
                 instruction: "Make your list. Include people, places, and institutions. Include everything; don't hold back or edit.",
                 items: [
-                    { key: "amends_list", prompt: "List people, places, and institutions you have harmed" },
-                    { key: "specific_harm", prompt: "State specific harm committed whether it was over a resentment or not." },
+                    {
+                        key: "amends_list_dynamic",
+                        count: 10,
+                        hasRippleEffects: true,
+                        rippleEffectsLabel: "Specific Harm Committed",
+                        prompt: "List people, places, and institutions.",
+                    },
                 ],
             },
         ],
