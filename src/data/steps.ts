@@ -18,6 +18,8 @@ export interface StepSection {
     title: string;
     instruction?: string;
     items: SectionItem[];
+    resourceUrl?: string;
+    resourceLabel?: string;
 }
 
 export interface StepPart {
@@ -57,6 +59,8 @@ export const steps: Step[] = [
                     {
                         type: "reading",
                         title: "Read With Intent and Purpose",
+                        resourceUrl: "https://www.aa.org/the-big-book",
+                        resourceLabel: "Read Big Book Online",
                         instruction: "Highlight areas that demonstrate 'powerless' and 'unmanageability'",
                         items: [{ key: "pages_xi_43", text: "Pages xi-43" }],
                     },
@@ -104,6 +108,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 instruction: "Highlight areas that demonstrate 'insanity'",
                 items: [{ key: "pages_44_60", text: "Pages 44-60 (stop at ABC's)" }],
             },
@@ -159,6 +165,8 @@ export const steps: Step[] = [
                     {
                         type: "reading",
                         title: "Read With Intent and Purpose",
+                        resourceUrl: "https://www.aa.org/the-big-book",
+                        resourceLabel: "Read Big Book Online",
                         items: [{ key: "pages_60_63", text: "Pages 60-63 (stop at 'Next we launched')" }],
                     },
                     {
@@ -201,6 +209,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "pages_63_64", text: "Pages 63-64 (stop at 'Next we launched')" }],
             },
             {
@@ -273,6 +283,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "pages_72_75", text: "Pages 72-75 (stop at 'returning home')" }],
             },
             {
@@ -304,6 +316,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "page_76_1", text: "Page 76 (first paragraph)" }],
             },
             {
@@ -344,6 +358,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "page_76_2", text: "Page 76 (second paragraph)" }],
             },
             {
@@ -366,6 +382,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "page_76_3", text: "Page 76 (third paragraph)" }],
             },
             {
@@ -410,6 +428,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "pages_76_83", text: "Pages 76-83 (stop at 'the promises')" }],
             },
             {
@@ -433,6 +453,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 items: [{ key: "pages_83_88", text: "Pages 83-88 (through 'promises')" }],
             },
             {
@@ -467,6 +489,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Daily Practice",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 instruction: "Read 'Upon Awakening' each morning",
                 items: [{ key: "upon_awakening", text: "Pages 86-89" }],
             },
@@ -488,6 +512,8 @@ export const steps: Step[] = [
             {
                 type: "reading",
                 title: "Read With Intent and Purpose",
+                resourceUrl: "https://www.aa.org/the-big-book",
+                resourceLabel: "Read Big Book Online",
                 instruction: "Study the 12th Step chapter",
                 items: [{ key: "pages_89_103", text: "Pages 89-103 ('Working With Others')" }],
             },

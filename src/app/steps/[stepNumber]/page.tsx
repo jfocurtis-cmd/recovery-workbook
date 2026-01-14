@@ -31,7 +31,7 @@ import {
     StepProgress,
 } from "@/lib/firebase/firestore";
 import { getStepByNumber, thirdStepPrayer, seventhStepPrayer, StepSection, SectionItem, Step, StepPart } from "@/data/steps";
-import { ArrowLeft, ArrowRight, Check, BookOpen, Sparkles, AlertCircle, HeartHandshake } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, BookOpen, Sparkles, AlertCircle, HeartHandshake, ExternalLink } from "lucide-react";
 import { BrandLogo } from "@/components/ui/brand-logo";
 import { StepNavigationHeader } from "@/components/steps/StepNavigationHeader";
 
@@ -392,6 +392,19 @@ export default function StepPage() {
                         {section.instruction && (
                             <p className="text-[#94a3b8] text-sm mb-4">{section.instruction}</p>
                         )}
+
+                        {section.resourceUrl && (
+                            <a
+                                href={section.resourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors mb-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20"
+                            >
+                                <ExternalLink className="h-4 w-4" />
+                                {section.resourceLabel || "Read Online"}
+                            </a>
+                        )}
+
                         <FillableChecklist
                             fieldKey={`${sectionKey}_checklist`}
                             title=""
