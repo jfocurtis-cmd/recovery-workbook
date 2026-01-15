@@ -8,6 +8,23 @@ import { Step, StepSection } from "@/data/steps";
 import { format } from "date-fns";
 import { useReactToPrint } from "react-to-print";
 
+// Helper to safely format dates - returns placeholder if invalid
+function safeFormatDate(dateString: string | undefined, formatStr: string, placeholder: string): string {
+    if (!dateString) return placeholder;
+    try {
+        const date = new Date(dateString);
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            // If it's a simple text like "January 2025", just show it as-is
+            return dateString;
+        }
+        return format(date, formatStr);
+    } catch {
+        // Return the raw string if it can't be formatted
+        return dateString;
+    }
+}
+
 interface StepExportProps {
     step: Step;
     stepData: Record<string, unknown>;
@@ -93,7 +110,7 @@ export function StepExport({ step, stepData, assignmentDate, completionDate, onE
                                                     {listValue[idx]?.content || "_________________________________"}
                                                     {item.hasDate && (
                                                         <span className="float-right text-gray-500 text-sm">
-                                                            Date: {listValue[idx]?.date ? format(new Date(listValue[idx].date), "MM/dd/yyyy") : "___/___/___"}
+                                                            Date: {safeFormatDate(listValue[idx]?.date, "MM/dd/yyyy", "___/___/___")}
                                                         </span>
                                                     )}
                                                 </li>
