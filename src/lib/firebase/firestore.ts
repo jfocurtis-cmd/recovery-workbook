@@ -1,4 +1,7 @@
-import { doc, setDoc, getDoc, updateDoc, collection, query, where, onSnapshot } from "firebase/firestore";
+// Demo mode flag - must match AuthContext
+const DEMO_MODE = true;
+
+import { doc, setDoc, getDoc, updateDoc, collection, query, where, onSnapshot, getDocs } from "firebase/firestore";
 import { db } from "./auth";
 
 // Types
@@ -30,11 +33,71 @@ export interface ResentmentEntry {
     sexReview: string;
 }
 
+// Demo data - sample progress for a user on step 4
+const DEMO_PROGRESS: StepProgress[] = [
+    {
+        id: "demo_step1",
+        userId: "demo-user-123",
+        stepNumber: 1,
+        assignmentDate: "2025-10-01T00:00:00.000Z",
+        completionDate: "2025-10-15T00:00:00.000Z",
+        data: {
+            admit: "To acknowledge openly, often reluctantly",
+            powerless: "Lacking strength, influence, or ability to control",
+            unmanageable: "Difficult or impossible to control or organize",
+        },
+        lastUpdated: "2025-10-15T00:00:00.000Z",
+    },
+    {
+        id: "demo_step2",
+        userId: "demo-user-123",
+        stepNumber: 2,
+        assignmentDate: "2025-10-16T00:00:00.000Z",
+        completionDate: "2025-11-01T00:00:00.000Z",
+        data: {
+            believe: "To accept as true or real",
+            restore: "To bring back to a previous condition",
+            sanity: "Soundness of mind, rational thinking",
+            insanity: "Doing the same thing expecting different results",
+        },
+        lastUpdated: "2025-11-01T00:00:00.000Z",
+    },
+    {
+        id: "demo_step3",
+        userId: "demo-user-123",
+        stepNumber: 3,
+        assignmentDate: "2025-11-02T00:00:00.000Z",
+        completionDate: "2025-11-20T00:00:00.000Z",
+        data: {},
+        lastUpdated: "2025-11-20T00:00:00.000Z",
+    },
+    {
+        id: "demo_step4",
+        userId: "demo-user-123",
+        stepNumber: 4,
+        assignmentDate: "2025-11-21T00:00:00.000Z",
+        data: {
+            launched: "To set in motion, begin",
+            moral: "Concerned with principles of right and wrong",
+        },
+        lastUpdated: "2025-12-15T00:00:00.000Z",
+    },
+];
+
+// In-memory storage for demo mode
+let demoProgressData: StepProgress[] = [...DEMO_PROGRESS];
+let localStepData: Record<string, Record<string, unknown>> = {};
+
 // Subscribe to real-time updates for step progress
 export function subscribeToStepProgress(
     userId: string,
     callback: (progress: StepProgress[]) => void
 ): () => void {
+    if (DEMO_MODE) {
+        setTimeout(() => callback(demoProgressData), 100);
+        return () => { };
+    }
+
     if (!db) {
         console.warn("Firestore not initialized");
         callback([]);
@@ -60,6 +123,29 @@ export async function getStepProgress(
     stepNumber: number,
     partNumber?: number
 ): Promise<StepProgress | null> {
+    if (DEMO_MODE) {
+        const stepData = demoProgressData.find(
+            (p) => p.stepNumber === stepNumber && p.userId === userId
+        );
+        if (stepData) {
+            const localKey = `${userId}_step${stepNumber}`;
+            if (localStepData[localKey]) {
+                return {
+                    ...stepData,
+                    data: { ...stepData.data, ...localStepData[localKey] },
+                };
+            }
+            return stepData;
+        }
+        return {
+            id: `${userId}_step${stepNumber}`,
+            userId,
+            stepNumber,
+            data: localStepData[`${userId}_step${stepNumber}`] || {},
+            lastUpdated: new Date().toISOString(),
+        };
+    }
+
     if (!db) {
         console.warn("Firestore not initialized");
         return null;
@@ -74,7 +160,6 @@ export async function getStepProgress(
             return { id: docSnap.id, ...docSnap.data() } as StepProgress;
         }
 
-        // Return empty progress structure for new steps
         return {
             id: docId,
             userId,
@@ -95,6 +180,31 @@ export async function saveStepProgress(
     stepNumber: number,
     data: Partial<StepProgress>
 ): Promise<void> {
+    if (DEMO_MODE) {
+        const existingIndex = demoProgressData.findIndex(
+            (p) => p.stepNumber === stepNumber && p.userId === userId
+        );
+
+        if (existingIndex >= 0) {
+            demoProgressData[existingIndex] = {
+                ...demoProgressData[existingIndex],
+                ...data,
+                lastUpdated: new Date().toISOString(),
+            };
+        } else {
+            demoProgressData.push({
+                id: `${userId}_step${stepNumber}`,
+                userId,
+                stepNumber,
+                data: data.data || {},
+                lastUpdated: new Date().toISOString(),
+                ...data,
+            } as StepProgress);
+        }
+        console.log("Demo: Saved step progress for step", stepNumber);
+        return;
+    }
+
     if (!db) {
         console.warn("Firestore not initialized");
         return;
@@ -123,6 +233,16 @@ export async function updateStepData(
     value: unknown,
     partNumber?: number
 ): Promise<void> {
+    if (DEMO_MODE) {
+        const localKey = `${userId}_step${stepNumber}`;
+        localStepData[localKey] = {
+            ...localStepData[localKey],
+            [fieldPath]: value,
+        };
+        console.log("Demo: Saved field", fieldPath, "for step", stepNumber);
+        return;
+    }
+
     if (!db) {
         console.warn("Firestore not initialized");
         return;
@@ -132,10 +252,8 @@ export async function updateStepData(
         const docId = `${userId}_step${stepNumber}${partNumber ? `_part${partNumber}` : ""}`;
         const docRef = doc(db, "stepProgress", docId);
 
-        // First ensure the document exists
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) {
-            // Create the document first
             await setDoc(docRef, {
                 userId,
                 stepNumber,
@@ -144,7 +262,6 @@ export async function updateStepData(
                 lastUpdated: new Date().toISOString(),
             });
         } else {
-            // Update existing document
             await updateDoc(docRef, {
                 [`data.${fieldPath}`]: value,
                 lastUpdated: new Date().toISOString(),
@@ -173,6 +290,22 @@ export async function completeStep(
     stepNumber: number,
     partNumber?: number
 ): Promise<void> {
+    if (DEMO_MODE) {
+        const existingIndex = demoProgressData.findIndex(
+            (p) => p.stepNumber === stepNumber && p.userId === userId
+        );
+
+        if (existingIndex >= 0) {
+            demoProgressData[existingIndex] = {
+                ...demoProgressData[existingIndex],
+                completionDate: new Date().toISOString(),
+                lastUpdated: new Date().toISOString(),
+            };
+        }
+        console.log("Demo: Marked step", stepNumber, "as complete");
+        return;
+    }
+
     await saveStepProgress(userId, stepNumber, {
         partNumber,
         completionDate: new Date().toISOString(),
@@ -215,7 +348,6 @@ export function calculateCurrentStepDays(
 
 // Get current step number
 export function getCurrentStepNumber(stepProgress: StepProgress[]): number {
-    // Find the highest step number that has an assignment date but no completion date
     const inProgressSteps = stepProgress.filter(
         (p) => p.assignmentDate && !p.completionDate
     );
@@ -224,7 +356,6 @@ export function getCurrentStepNumber(stepProgress: StepProgress[]): number {
         return Math.max(...inProgressSteps.map((p) => p.stepNumber));
     }
 
-    // If all assigned steps are complete, return the next step
     const completedSteps = stepProgress.filter((p) => p.completionDate);
     if (completedSteps.length > 0) {
         const maxCompleted = Math.max(...completedSteps.map((p) => p.stepNumber));
@@ -244,6 +375,10 @@ export function getCompletedStepsCount(stepProgress: StepProgress[]): number {
 
 // Get all step progress for a user
 export async function getAllStepProgress(userId: string): Promise<StepProgress[]> {
+    if (DEMO_MODE) {
+        return demoProgressData;
+    }
+
     if (!db) {
         console.warn("Firestore not initialized");
         return [];
@@ -251,7 +386,7 @@ export async function getAllStepProgress(userId: string): Promise<StepProgress[]
 
     try {
         const q = query(collection(db, "stepProgress"), where("userId", "==", userId));
-        const snapshot = await import("firebase/firestore").then(m => m.getDocs(q));
+        const snapshot = await getDocs(q);
         const progress: StepProgress[] = [];
         snapshot.forEach((docSnap) => {
             progress.push({ id: docSnap.id, ...docSnap.data() } as StepProgress);
